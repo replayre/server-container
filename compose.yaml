@@ -1,0 +1,25 @@
+services:
+  server:
+    image: ghcr.io/replayre/server
+    restart: unless-stopped
+    stop_grace_period: 30s
+    ports:
+      # cfg/server.cfg is overruled by these
+      - "${GAME_PORT:-20770}:${GAME_PORT:-20770}/udp"
+      - "${GAME_PORT:-20770}:${GAME_PORT:-20770}/tcp"
+      - "${VOIP_PORT:-20771}:${VOIP_PORT:-20771}/udp"
+    environment:
+      # settings are applied on every start
+      CHANNEL: "alpha"
+      AUTO_UPDATE: "true"
+      RESTART_AFTER_UPDATE: "auto"
+      GAME_PORT: "${GAME_PORT:-20770}"
+      VOIP_PORT: "${VOIP_PORT:-20771}"
+    volumes:
+      - server-data:/srv
+      - ./cfg:/srv/cfg
+      - ./logs:/srv/logs
+      - ./ugc:/srv/data/ugc
+
+volumes:
+  server-data:
