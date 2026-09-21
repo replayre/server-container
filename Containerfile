@@ -4,7 +4,12 @@
 # All future updates will be applied by the built-in updater
 
 ARG BASE=debian:trixie-slim
+
+FROM debian:forky-slim AS runtime-libs
+RUN cp -L /usr/lib/x86_64-linux-gnu/libstdc++.so.6 /libstdc++.so.6
+
 FROM ${BASE}
+ARG BASE
 
 RUN apt-get update \
  && apt-get install -y --no-install-recommends \
@@ -15,17 +20,25 @@ RUN apt-get update \
  && rm -rf /var/lib/apt/lists/*
 
 COPY seed /opt/replay/seed
+COPY --from=runtime-libs /libstdc++.so.6 /opt/replay/seed/libstdc++.so.6
 COPY entrypoint.sh /usr/local/bin/replay-entrypoint
 RUN chmod 755 /usr/local/bin/replay-entrypoint
 
 # use LDD to check if the base image libraries are new enough to handle the server build
 # LDD gives way better debug messages
 RUN set -eu; \
-    ldd /opt/replay/seed/REServer /opt/replay/seed/*.so > /tmp/ldd.txt 2>&1; \
-    missing=$(awk "/not found/ { if (match(\$0, /GLIBCXX_[0-9.]+|OPENSSL_[0-9.]+|GLIBC_[0-9.]+/)) print substr(\$0, RSTART, RLENGTH) }" /tmp/ldd.txt | sort -u); \
-    if [ -n "$missing" ]; then \
-        echo "The payload needs symbol versions this base image does not provide:" >&2; \
-        echo "$missing" >&2; \
+    missing=0; \
+    for binary in /opt/replay/seed/REServer /opt/replay/seed/*.so; do \
+        versions=$(ldd "$binary" 2>&1 | awk "/not found/ { if (match(\$0, /GLIBCXX_[0-9.]+|OPENSSL_[0-9.]+|GLIBC_[0-9.]+/)) print substr(\$0, RSTART, RLENGTH) }" | sort -uV | tr "\n" " "); \
+        if [ -n "$versions" ]; then \
+            echo "$(basename "$binary"): $versions" >&2; \
+            missing=1; \
+        fi; \
+    done; \
+    if [ "$missing" != 0 ]; then \
+        echo "" >&2; \
+        echo "The payload needs symbol versions this base image does not provide." >&2; \
+        echo "It was built against a newer system than ${BASE}, so the image cannot run it." >&2; \
         exit 1; \
     fi; \
     /opt/replay/seed/REServer --help > /dev/null
