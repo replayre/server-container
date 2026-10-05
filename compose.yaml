@@ -3,6 +3,8 @@ services:
     image: ghcr.io/replayre/server
     restart: unless-stopped
     stop_grace_period: 30s
+    stdin_open: true
+    tty: true
     ports:
       # cfg/server.cfg is overruled by these
       - "${GAME_PORT:-20770}:${GAME_PORT:-20770}/udp"
