@@ -57,6 +57,7 @@ VOLUME ["/srv"]
 EXPOSE 20770/tcp
 EXPOSE 20770/udp
 EXPOSE 20771/udp
+EXPOSE 20771/tcp
 
 ENV CHANNEL=alpha \
     AUTO_UPDATE=true \

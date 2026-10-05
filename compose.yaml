@@ -8,6 +8,7 @@ services:
       - "${GAME_PORT:-20770}:${GAME_PORT:-20770}/udp"
       - "${GAME_PORT:-20770}:${GAME_PORT:-20770}/tcp"
       - "${VOIP_PORT:-20771}:${VOIP_PORT:-20771}/udp"
+      - "${VOIP_PORT:-20771}:${VOIP_PORT:-20771}/tcp"
     environment:
       # settings are applied on every start
       CHANNEL: "alpha"

@@ -6,6 +6,9 @@
 * [Console access](#console-access)
 * [Volume and mounts](#volume-and-mounts)
 
+This README is written for a more technical audience. If you are looking for user friendly documentation, please visit
+the [replay.re Docs](https://docs.replay.re/servers/quick-start/)
+
 The install directory of the server is a **volume**, which gets seeded during first launch with
 binaries bundled during image build time. The image contains this seed data in `/opt/replay/seed`,
 which the entrypoint copies into `/srv` **when the volume holds no server yet**.
@@ -22,7 +25,7 @@ server logs.
 Alternatively you can also launch the image directly via:
 ```sh
 podman run -d --name replay-server --restart=unless-stopped \
-  -p 20770:20770/udp -p 20770:20770/tcp -p 20771:20771/udp \
+  -p 20770:20770/udp -p 20770:20770/tcp -p 20771:20771/udp -p 20771:20771/tcp \
   -v replay-server:/srv \
   ghcr.io/replayre/server
 ```
@@ -32,7 +35,7 @@ example.
 
 ## Ports
 
-Defaults: `20770` for the game (TCP + UDP) and `20771` for VoIP.
+Defaults: `20770` for the game (TCP + UDP) and `20771` for VoIP (TCP + UDP).
 
 Both are forced onto the server from the environment (`GAME_PORT`, `VOIP_PORT`), which outranks
 anything `cfg/server.cfg` says about them.
