@@ -55,5 +55,5 @@ printf '{\n%s\n}\n' "$settings" > "$INSTALL/settings/server.settings.json"
 cd "$INSTALL"
 exec stdbuf -o0 ./REServer \
     --bindaddr "[::]:${GAME_PORT}" \
-    --voip-addr ":::${VOIP_PORT}" \
+    --voip-addr "[::]:${VOIP_PORT}" \
     "$@"
