@@ -13,7 +13,7 @@ services:
       - "${VOIP_PORT:-20771}:${VOIP_PORT:-20771}/tcp"
     environment:
       # settings are applied on every start
-      CHANNEL: "alpha"
+      CHANNEL: "stable"
       AUTO_UPDATE: "true"
       RESTART_AFTER_UPDATE: "auto"
       GAME_PORT: "${GAME_PORT:-20770}"

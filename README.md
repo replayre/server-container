@@ -57,9 +57,9 @@ a load balancer or a DNS name.
 The server contains a built-in updater. On every start it fetches the manifest of its channel and
 compares it against what is installed. With automatic updates, the default, the differences are
 downloaded and applied before the server starts. The `CHANNEL` is written into 
-`settings/server.settings.json` on every start. `alpha` is currently the only channel:
+`settings/server.settings.json` on every start. `stable` is the default channel, 'alpha' is an option:
 ```sh
-podman run -d --name replay-server -e CHANNEL=alpha -v replay-server:/srv ghcr.io/replayre/server
+podman run -d --name replay-server -e CHANNEL=stable -v replay-server:/srv ghcr.io/replayre/server
 ```
 
 ### Automatic
@@ -88,7 +88,7 @@ If there is nothing to apply, or the download server cannot be reached, it repor
 
 **With a one-shot run**:
 ```sh
-podman run --rm -e CHANNEL=alpha -v replay-server:/srv ghcr.io/replayre/server --update
+podman run --rm -e CHANNEL=stable -v replay-server:/srv ghcr.io/replayre/server --update
 ```
 
 `--update` applies whatever is pending regardless of `AUTO_UPDATE`, so the flag alone is enough, but
